@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "seed": "node seed index.js"
   },
   "keywords": [],
   "author": "",
@@ -18,9 +19,13 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
+    "fs": "^0.0.1-security",
+    "gridfs-stream": "^1.1.1",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.3.6"
+    "mongoose": "^6.3.6",
+    "mongoose-seed": "^0.6.0",
+    "sequelize": "^6.21.1"
   },
   "type": "module"
 }

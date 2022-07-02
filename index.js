@@ -3,48 +3,30 @@ import cors from "cors";
 import mongoose from "mongoose";
 import register from "./routes/register/index.js";
 import login from "./routes/login/index.js";
+import products from "./routes/products/index.js";
+import order from "./routes/orders/index.js";
+import {Product} from "./models/Product/index.js"
 import "dotenv/config";
+import fs from "fs";
 
 const app = express();
+
 app.use(cors())
 app.use('/api/register', register);
 app.use('/api/login', login);
+app.use('/api/products', products);
+app.use('/api/order', order);
 
 
-const products = [
-  {
-    id :1,
-    name: "iPhone 13",
-    price: "1000$",
-    url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6EVHlhxx9OCvfT0HhCs2bJ_2hRLJKqZRJt5AbJaLcYx2MVldw1S3QHLbhCMt8lG05JT0&usqp=CAU"
-  },
-  {
-    id :2,
-    name: "iPhone 13 pro",
-    price: "1200$",
-    url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6EVHlhxx9OCvfT0HhCs2bJ_2hRLJKqZRJt5AbJaLcYx2MVldw1S3QHLbhCMt8lG05JT0&usqp=CAU"
-  },
-  {
-    id :3,
-    name: "iPhone 13 pro max",
-    price: "1500$",
-    url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6EVHlhxx9OCvfT0HhCs2bJ_2hRLJKqZRJt5AbJaLcYx2MVldw1S3QHLbhCMt8lG05JT0&usqp=CAU"
-  },
-  {
-    id :4,
-    name: "iPhone 13 pro max",
-    price: "1500$",
-    url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6EVHlhxx9OCvfT0HhCs2bJ_2hRLJKqZRJt5AbJaLcYx2MVldw1S3QHLbhCMt8lG05JT0&usqp=CAU"
-  },
-];
+app.get("/:filename", async (req, res) => {
+  fs.readFile('./products/images/' + req.params.filename, (err, data) => {
+    res.end(data)
+  })
+})
 
-
-app.get("/", (req, res) => {
-    res.send(products)
-});
-
-
-mongoose.connect(process.env.DB_CONNECTION,
+mongoose.connect(
+  // process.env.DB_CONNECTION,
+  'mongodb://localhost:27017/shop',
   {useNewUrlParser: true},
   {useUnifiedTopology: true},
   () => {console.log("connected mongo db")}

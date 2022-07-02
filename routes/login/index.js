@@ -7,25 +7,31 @@ import genAuthToken from "../../utils/genAuthToken/index.js"
 
 const router = express.Router();
 
-router.post('/', bodyParser.json(), async (req, res) => {
+const schema = Joi.object().keys({
+  email: Joi.string().min(10).max(30).required().email(),
+  password: Joi.string().min(6).max(200).required()
+}).options({ abortEarly: false });
 
-  const schema = Joi.object({
-    email: Joi.string().min(10).max(30).required().email(),
-    password: Joi.string().min(6).max(200).required()
-  });
+router.post('/', bodyParser.json(), async (req, res) => {
 
   const {error} = schema.validate(req.body);
   const user = await User.findOne({email: req.body.email});
 
-  let isValid
+  let isValid;
+
   if (user) isValid = await bcrypt.compare(req.body.password, user.password);
 
   if (error) {
 
-    const message = error.details[0].message;
-    const index = message.lastIndexOf('"');
-    const errorName = message.slice(1, index);
-    res.status(400).send({[errorName]: message.slice(index + 1)});
+    let message;
+
+    error.details.forEach((item, i) => {
+      const index = item.message.lastIndexOf('"');
+      const errorName = item.message.slice(1, index);
+      message = {...message, [errorName]: item.message.slice(index + 1)}
+    });
+
+    res.status(400).send(message);
 
   } else if (!user) {
 
@@ -38,9 +44,14 @@ router.post('/', bodyParser.json(), async (req, res) => {
   } else {
 
     const token = genAuthToken(user);
-    res.send({token});
-
+    res.send({token, id: user._id});
   }
 })
+
+
+// router.get('/', (req, res) => {
+//   const users = User.find({_id: "62b75348b975b251d5917767"}, (err, docs) => res.json(docs))
+// })
+
 
 export default router
