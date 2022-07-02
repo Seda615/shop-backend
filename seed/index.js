@@ -1,41 +1,13 @@
 import mongoose from 'mongoose';
 import {Product} from '../models/Product/index.js';
-import seeder from 'mongoose-seed';
 
-
-seeder.connect( 'mongodb://localhost:27017/shop', () => {
-  seeder.loadModels(['../models/Product/index.js']);
-  seeder.clearModels(['product']);
-  seeder.populateModels(data, (err, done) => {
-    if (err) {
-      console.log(err)
-    } else {
-      console.log(done)
-    }
-  })
-}
+mongoose.connect(
+  // process.env.DB_CONNECTION,
+  'mongodb://localhost:27017/shop',
+  {useNewUrlParser: true},
+  {useUnifiedTopology: true},
+  () => {console.log("connected mongo db")}
 )
-
-const data = [
-  {
-    "model": "product",
-    "documents": [
-      {
-        "name": 'Apple',
-        "price": '3000$',
-        "description": '8GB memory 256GB SSD',
-        "imageName": 'air-13-teaser.jpg'
-      },
-    ]
-  }
-]
-// mongoose.connect(
-//   // process.env.DB_CONNECTION,
-  // 'mongodb://localhost:27017/shop',
-//   {useNewUrlParser: true},
-//   {useUnifiedTopology: true},
-//   () => {console.log("connected mongo db")}
-// )
 
 
 
@@ -373,8 +345,8 @@ const products = [
 ];
 
 
-// const seedDB = async () => {
-//   await Product.insertMany(products);
-// }
-//
-// seedDB().then(() => mongoose.connection.close())
+const seedDB = async () => {
+  await Product.insertMany(products);
+}
+
+seedDB().then(() => mongoose.connection.close())
